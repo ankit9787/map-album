@@ -1,19 +1,17 @@
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
-  (click)="getFilePath('1')">
-  Show folder 1 pic
-</button> <br>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
-  (click)="getFilePath('2')">
-  Show folder 2 pic
+<button type="button" class="btn btn-primary" (click)="openModalDiff()">
+  launch modal comp
 </button>
-<button type="button" class="btn btn-primary"
+
+<app-map (notifyParent)="getNotification($event)"></app-map>
+
+<!-- <button type="button" class="btn btn-primary"
 (click)="openModal(modalData, 1)">
   launch modal ts
-</button>
+</button> -->
 
 <!-- Modal -->
 
-<ng-template #modalData let-modal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<!-- <ng-template #modalData let-modal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   aria-hidden="true">
 
       <div class="modal-header">
@@ -41,5 +39,4 @@
         </div>
       </div>
   
-</ng-template>
-<app-map></app-map>
+</ng-template> -->

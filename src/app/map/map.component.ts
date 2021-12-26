@@ -1,18 +1,18 @@
-import { AfterViewInit, Component, OnInit} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import * as L from 'leaflet';
 import * as geojson from 'geojson';
 const iconRetinaUrl = './assets/marker-icon-2x.png';
 const iconUrl = './assets/marker-icon.png';
 const shadowUrl = './assets/marker-shadow.png';
 const iconDefault = L.icon({
-iconRetinaUrl,
-iconUrl,
-shadowUrl,
-iconSize: [25, 41],
-iconAnchor: [12, 41],
-popupAnchor: [1, -34],
-tooltipAnchor: [16, -28],
-shadowSize: [41, 41]
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
 });
 L.Marker.prototype.options.icon = iconDefault;
 
@@ -23,11 +23,14 @@ L.Marker.prototype.options.icon = iconDefault;
 })
 export class MapComponent implements AfterViewInit {
   private map: any;
-  abc = false;
+
+  @Output() notifyParent: EventEmitter<any> = new EventEmitter();
+
+  constructor() { }
 
   private initMap(): void {
     this.map = L.map('map', {
-      center: [ 24.726875, 77.871094 ],
+      center: [24.726875, 77.871094],
       zoom: 5
     });
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -38,86 +41,83 @@ export class MapComponent implements AfterViewInit {
     tiles.addTo(this.map);
 
     L.marker([24.726875, 77.871094]).addTo(this.map)
-    .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-    .openPopup();
-
+      .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+      .openPopup();
 
     this.map.on('click', this.onMapClick, this);
-
-    
   }
 
   onMapClick(e: any) {
     var popup = L.popup();
     popup
-        .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(this.map);
-}
-  constructor() { } 
+      .setLatLng(e.latlng)
+      .setContent("You clicked the map at " + e.latlng.toString())
+      .openOn(this.map);
+  }
+  
+ 
 
-  ngAfterViewInit(): void { 
+  ngAfterViewInit(): void {
     this.initMap();
   }
 
   addMarker(): void {
     L.marker([67.8282, -98.5795]).addTo(this.map)
-    .bindPopup('New marker added')
-    .openPopup();
+      .bindPopup('New marker added')
+      .openPopup();
   }
 
-  createMarker(){
-    console.log("hello")
-    var geojsonFeature:any = [{
+  createMarker() {
+    var geojsonFeature: any = [{
       "type": "Feature",
       "properties": {
-          "name": "Coors Field",
-          "amenity": "Baseball Stadium",
-          "popupContent": "This is where the Rockies play!"
+        "name": "Shimla",
+        "amenity": "Baseball Stadium",
+        "popupContent": "This is where the Rockies play!"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [78, 22]
       }
-  }];
+    }];
 
-  L.geoJSON(geojsonFeature).addTo(this.map);
+    L.geoJSON(geojsonFeature).addTo(this.map).on('click', this.sendNotification, this);
 
-var states:any = [{
-  "type": "Feature",
-  "properties": {"party": "Republican"},
-  "geometry": {
-      "type": "Polygon",
-      "coordinates": [[
+    var states: any = [{
+      "type": "Feature",
+      "properties": { "party": "Republican" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
           [-104.05, 48.99],
-          [-97.22,  48.98],
-          [-96.58,  45.94],
+          [-97.22, 48.98],
+          [-96.58, 45.94],
           [-104.03, 45.94],
           [-104.05, 48.99]
-      ]]
-  }
-}, {
-  "type": "Feature",
-  "properties": {"party": "Democrat"},
-  "geometry": {
-      "type": "Polygon",
-      "coordinates": [[
+        ]]
+      }
+    }, {
+      "type": "Feature",
+      "properties": { "party": "Democrat" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
           [-109.05, 41.00],
           [-102.06, 40.99],
           [-102.03, 36.99],
           [-109.04, 36.99],
           [-109.05, 41.00]
-      ]]
+        ]]
+      }
+    }];
+    L.geoJSON(states).addTo(this.map);
   }
-}];
 
-console.log(states);
-
-
-L.geoJSON(states).addTo(this.map);
-
-
+  sendNotification(geojsonFeature: any) {
+    var amenity = geojsonFeature.layer.feature.properties;
+    this.notifyParent.emit(amenity); //send properties to another component
   }
+
 
 }
 
