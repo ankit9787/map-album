@@ -6,16 +6,20 @@
   (click)="getFilePath('2')">
   Show folder 2 pic
 </button>
+<button type="button" class="btn btn-primary"
+(click)="openModal(modalData, 1)">
+  launch modal ts
+</button>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+
+<ng-template #modalData let-modal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
+
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
         </button>
       </div>
       <div class="modal-body">
@@ -36,8 +40,6 @@
           </a>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-
+  
+</ng-template>
 <app-map></app-map>
